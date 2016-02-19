@@ -1,9 +1,27 @@
+/*
+Disponivel em: https://github.com/anglo-cc-estruturas/funcoes
+
+Exercicios:
+18/02/2016
+1 - Implementar o metodo(s) editar, que servira para editar um cadastro
+2 - Implementar a exclusao de um cadastro, tanto por ID quanto por Nome
+3 - Implementar a pesquisa de um usuario por nome (deve se imprimir o cadastro do usuario)
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #define SIZE_NOME 32
 #define QTD_PESSOAS 5
 
+// Para Linux/Mac
+#define CLEAR "clear"
+#define PAUSE "read a"
+
+// Para Windows
+//#define CLEAR "cls"
+//#define PAUSE "pause"
 
 typedef struct pessoa {
     char nome[SIZE_NOME];
@@ -23,7 +41,7 @@ void limpa_buffer(){
 void ler_pessoa(tpPessoa *pessoa){
     printf("Informe o nome da pessoa: ");
     limpa_buffer();
-    scanf("%s",pessoa->nome);
+    scanf("%[^\n]s",pessoa->nome);
 
     printf("Informe a idade da pessoa: ");
     limpa_buffer();
@@ -45,22 +63,33 @@ void gravar_pessoa(tpPessoa pessoas[], tpPessoa pessoa, int posicao){
 }
 
 int busca_posicao_livre(int posicoes[]){
-    int i, pos;
-
-    pos = -1;
+    int i;
 
     for(i = 0; i < sizeof(posicoes); i++){
         if (posicoes[i] == 0)
-            return pos;
+            return i;
     }
 
-    return pos;
+    return -1;
+}
+
+void listar_todas_pessoas(tpPessoa pessoas[],int posicoes[]){
+    int i;
+
+    system(CLEAR);
+
+    for(i = 0; i < sizeof(pessoas); i++){
+        if (posicoes[i] == 1)
+            imprimir_pessoa(pessoas[i]);
+    }
+
+    system(PAUSE);
 }
 
 int menu(){
     int opc;
 
-    system("clear");
+    system(CLEAR);
 
     printf("\n\n###### MENU #######\n\n");
     printf("1 - Castrar Pessoa\n");
@@ -108,23 +137,22 @@ int main()
                 ler_pessoa(&pessoa);
                 i = busca_posicao_livre(posicoes);
 
-                if ( i != -1)
+                if( i != -1){
+                    posicoes[i] = 1;
                     gravar_pessoa(pessoas,pessoa,i);
-                else
+                }else{
                     msgs_erro(1);
+                }
                 break;
             }
             case 2: {
-
+                listar_todas_pessoas(pessoas,posicoes);
+                break;
             }
 
         }
     }
 
 
-    ler_pessoa(&pessoa);
-
-    imprimir_pessoa(pessoa);
-
-    return 0;
+   return 0;
 }
